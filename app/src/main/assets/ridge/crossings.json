@@ -1,0 +1,41 @@
+{
+  "deck": {
+    "x0": -0.176,
+    "x1": -0.024,
+    "z": 0.18,
+    "top": 0.0105,
+    "spans": 22,
+    "radius": 0.00335,
+    "halfSegments": 8
+  },
+  "laneX": 0.28,
+  "laneY": 0.005,
+  "halfSpan": 0.018,
+  "postHalfWidth": 0.0014,
+  "barHalfDepth": 0.0009,
+  "bars": [
+    {
+      "z": -0.068,
+      "bottom": 0.020926146,
+      "top": 0.021346146,
+      "approachRise": 0.0
+    }
+  ],
+  "walls": [
+    {
+      "x0": 0.26,
+      "x1": 0.3,
+      "z": 0.072,
+      "halfDepth": 0.0038,
+      "height": 0.016,
+      "base": 0.005
+    }
+  ],
+  "stream": {
+    "x0": -0.19,
+    "x1": -0.01,
+    "z0": 0.06,
+    "z1": 0.3,
+    "depthScale": 0.26
+  }
+}

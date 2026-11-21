@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.22)
+project(runner)
+add_library(runner SHARED network.cpp bridge_contact.cpp)
+target_compile_features(runner PRIVATE cxx_std_17)
+target_compile_options(runner PRIVATE -O3 -ffp-contract=fast)
