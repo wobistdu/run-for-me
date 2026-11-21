@@ -1,15 +1,16 @@
 app:
+  id: "7710228625718689843"
   name: 替我跑
   slogan: 把一座山放到桌上。你看向哪里插旗，跑者就往哪里去。
   description: |
     在 PICO 共享空间放一座桌面越野沙盘，看林溪或陆野自动巡跑。跑上独木桥，跑者会展开双臂找平衡；遇到低门，又会弯膝俯身。
     在「今日寻星」中，看向金色五角星，捏合再松开，用三面旗收齐三颗星。在「自由玩山野」中，可以插旗带路，也可以捏住地面拖动，改变山路的起伏。
     数据板记录虚拟跑者的里程、爬升和连续跑动天数。累计完成寻星打卡 1、3、7 天，依次点亮三枚可旋转查看的立体徽章。
-  tags: [休闲]
+  tags: [ 休闲益智 ]
   category: game
   icon: release-assets/icon.png
   landscape: release-assets/landscape.jpg
-  detail_images: [release-assets/detail.jpg]
+  detail_images: [ release-assets/detail.jpg ]
   videos: []
 version:
   name: 0.3.1
@@ -20,5 +21,5 @@ build:
   tech_stack: android_spatial
   ai_tool: Codex
   ai_model: GPT-6
-  features: [hand_tracking, mixed_reality]
+  features: [ hand_tracking, mixed_reality ]
   teammates: []
