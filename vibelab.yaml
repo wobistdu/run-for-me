@@ -1,25 +1,70 @@
 app:
   id: "7710228625718689843"
   name: 替我跑
-  slogan: 把一座山放到桌上。你看向哪里插旗，跑者就往哪里去。
-  description: |
-    在 PICO 共享空间放一座桌面越野沙盘，看林溪或陆野自动巡跑。跑上独木桥，跑者会展开双臂找平衡；遇到低门，又会弯膝俯身。
-    在「今日寻星」中，看向金色五角星，捏合再松开，用三面旗收齐三颗星。在「自由玩山野」中，可以插旗带路，也可以捏住地面拖动，改变山路的起伏。
-    数据板记录虚拟跑者的里程、爬升和连续跑动天数。累计完成寻星打卡 1、3、7 天，依次点亮三枚可旋转查看的立体徽章。
-  tags: [ 休闲益智 ]
+  slogan: " Cyber 分身替你完成跑步"
+  description: |-
+    把虚拟越野沙盘**搬进 PICO 共享空间**——它就摆在你家的书桌上。
+
+    沙盘中有两条山野线路：
+    - **林溪线**：有潺潺流水和林间土路，适合喜欢清新绿意的朋友；
+    - **陆野线**：是开阔的砂石旷野，更有越野跑的原始感。
+
+    你可以任选一条路线，让虚拟跑者**自动巡跑**。跑者会随着地形自动做出拟真动作：
+    - 跑上**独木桥**时，他会自动展开双臂找平衡；
+    - 遇到**低门**时，又会弯膝俯身穿过去。
+    这些动作都由 **AI 根据地形实时生成**，每一次跑动都有自然的临场感。
+
+    ## 两种玩法，轻松沉浸
+    ### 🏅 今日寻星
+    每天打开都有新挑战：
+    1. 看向沙盘中的**金色五角星**；
+    2. 捏合再松开，把星摘下来；
+    3. 用三面小旗依次收齐三颗星，就算完成当日打卡。
+
+    打卡节奏可以自己掌握，几分钟就能跑完一局，适合每天随手来一次。
+
+    ### 🏕️ 自由玩山野
+    不想被任务限定？可以自由改造山路：
+    - **插旗带路**：手动指定跑者路线；
+    - **拖动地形**：捏住地面就能调整山路起伏，搭出你喜欢的小坡道。
+
+    ## 数据板与打卡徽章
+    沙盘旁的数据板会帮你记录：
+    - 虚拟跑者的**里程**
+    - **爬升高度**
+    - **连续跑动天数**
+
+    累计完成「今日寻星」打卡：
+    - 第 **1 天** 点亮第一枚徽章
+    - 第 **3 天** 点亮第二枚徽章
+    - 第 **7 天** 点亮第三枚徽章
+
+    每枚徽章都是**立体造型**，可以拿在手里旋转查看，成就感拉满。
+  tags:
+    - 休闲益智
   category: game
-  icon: release-assets/icon.png
-  landscape: release-assets/landscape.jpg
-  detail_images: [ release-assets/detail.jpg ]
+  icon: uri:tos-cn-i-1f2op84boi/f3df0312-7f55-46a9-aa5b-822b70bcfac8.png
+  landscape: uri:tos-cn-i-1f2op84boi/eea95703-8128-4a3f-82f0-a2a370e30ae2.jpg
+  detail_images:
+    - release-assets/bridge-front.jpg
+    - release-assets/bridge-side.jpg
+    - release-assets/low-gate-front.jpg
+    - release-assets/low-gate-side.jpg
+    - uri:tos-cn-i-1f2op84boi/d9e746f0-985d-4a8c-8bb2-733a4dce9c5e.jpeg
   videos: []
 version:
   name: 0.3.1
-  notes: 桌面越野沙盘、双主角巡跑、插旗寻星、地形编辑和立体成就徽章。
+  notes: |-
+    【本次更新】
+    - 支持 AI 动作适配：系统会根据不同地形实时生成对应动作
+    - 上线趣味跑步玩法：包含桌面越野沙盘、主角巡跑、插旗寻星、地形编辑、立体成就徽章等
 build:
   repo_url: https://github.com/wobistdu/run-for-me
   repo_visibility: private
   tech_stack: android_spatial
   ai_tool: Codex
   ai_model: GPT-6
-  features: [ hand_tracking, mixed_reality ]
+  features:
+    - hand_tracking
+    - mixed_reality
   teammates: []
