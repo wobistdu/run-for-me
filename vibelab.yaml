@@ -46,8 +46,8 @@ app:
   icon: uri:tos-cn-i-1f2op84boi/f3df0312-7f55-46a9-aa5b-822b70bcfac8.png
   landscape: uri:tos-cn-i-1f2op84boi/eea95703-8128-4a3f-82f0-a2a370e30ae2.jpg
   detail_images:
-    - uri:tos-cn-i-1f2op84boi/ff63c837-8b1e-4c3c-a403-d4bff4a38636.jpg
-    - uri:tos-cn-i-1f2op84boi/bb3d0d86-0236-409e-bf99-35d44097a3c5.jpg
+    - release-assets/bridge-front.jpg
+    - release-assets/bridge-side.jpg
     - uri:tos-cn-i-1f2op84boi/ce92d3e8-256b-4c7c-9f45-b954f0b731fb.jpg
     - uri:tos-cn-i-1f2op84boi/bba8eb54-44de-45e2-8518-b9f056144d27.jpg
     - uri:tos-cn-i-1f2op84boi/d9e746f0-985d-4a8c-8bb2-733a4dce9c5e.jpeg
