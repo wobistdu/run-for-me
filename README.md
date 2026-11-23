@@ -24,6 +24,8 @@ pico-cli app launch com.example.terrainrunner
 
 ## 资源来源
 
+第三方资源的许可和 PFNN 引用见 [第三方许可说明](THIRD_PARTY_NOTICES.md)。
+
 林溪与陆野由 PICO SGS 生成并针对 PFNN 绑定，分别为 45,606 和 33,628 个三角面。山体与三枚金属徽章同样来自 SGS。任务编号如下。
 
 | 资源 | SGS 任务 |
