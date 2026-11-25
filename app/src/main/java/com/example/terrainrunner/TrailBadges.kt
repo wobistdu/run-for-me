@@ -16,20 +16,20 @@ internal enum class TrailBadge(val title:String,val days:Int){
 
 /** Each SGS model moves from its board slot into the detail view without loading a second mesh. */
 internal class TrailBadges(board:Entity,private val metresPerDp:Float,private val medals:Map<TrailBadge,Entity>){
-    private data class Finish(val model:ModelComponent,val original:PhysicallyBasedMaterial,val silver:PhysicallyBasedMaterial)
+    private data class Finish(val models:List<ModelComponent>,val originals:List<List<PhysicallyBasedMaterial>>,val silver:PhysicallyBasedMaterial)
     private val finishes=medals.mapValues{(_,root)->
-        val model=root.tree().mapNotNull{it.components.get<ModelComponent>()}.single()
-        val original=model.materials.single() as PhysicallyBasedMaterial
-        // The first switch to silver detaches the colored material until this badge is earned.
-        original.toGlobal()
+        val models=root.tree().mapNotNull{it.components.get<ModelComponent>()}.toList()
+        val originals=models.map { model->
+            model.materials.map { (it as PhysicallyBasedMaterial).apply{toGlobal()} }
+        }
         val silver=PhysicallyBasedMaterial.create().apply{
             toGlobal()
             setBaseColor(Color4(.80f,.82f,.85f,1f))
             setMetallic(.52f);setRoughness(.42f)
-            original.getNormalTexture()?.let{setNormalTexture(it)}
+            originals.first().first().getNormalTexture()?.let{setNormalTexture(it)}
         }
         board.addChild(root)
-        Finish(model,original,silver)
+        Finish(models,originals,silver)
     }
     val previewHit=Entity().also{
         val size=Vector3(140f,140f,118f)*metresPerDp
@@ -37,21 +37,27 @@ internal class TrailBadges(board:Entity,private val metresPerDp:Float,private va
         it.components.set(InteractableComponent())
         it.enabled=false;board.addChild(it)
     }
+    private val nodes=medals.mapValues{(_,root)->root.tree().toList()}
+    private var visible=true
     private var shown:TrailBadge?=null
     private var yaw=Float.NaN
     private var days=-1
     private var width=0f
     private var height=0f
 
-    fun update(earnedDays:Int,selected:TrailBadge?,angle:Float){
+    fun update(earnedDays:Int,selected:TrailBadge?,angle:Float,visible:Boolean=true){
         if(days!=earnedDays){
             for((badge,finish) in finishes){
-                finish.model.materials[0]=if(badge.isEarned(earnedDays))finish.original else finish.silver
+                finish.models.forEachIndexed { index,model->
+                    finish.originals[index].forEachIndexed { slot,original->
+                        model.materials[slot]=if(badge.isEarned(earnedDays))original else finish.silver
+                    }
+                }
             }
             days=earnedDays
         }
-        if(shown!=selected){
-            shown=selected;yaw=Float.NaN
+        if(shown!=selected || this.visible!=visible){
+            this.visible=visible;shown=selected;yaw=Float.NaN
             previewHit.enabled=selected!=null
             layout()
             android.util.Log.i("TrailBadges","gallery=${selected?.name}")
@@ -69,8 +75,10 @@ internal class TrailBadges(board:Entity,private val metresPerDp:Float,private va
     private fun layout(){
         val preview=Vector3(-width*.5f+111f*metresPerDp,0f,58f*metresPerDp)
         previewHit.tr.position=preview
+        previewHit.enabled=visible && shown!=null
         for((badge,root) in medals){
-            root.enabled=shown==null || badge==shown
+            val enabled=visible && (shown==null || badge==shown)
+            nodes.getValue(badge).forEach{it.enabled=enabled}
             if(badge==shown){
                 root.tr.position=preview
                 root.tr.scaleVector=Vector3(56f*metresPerDp)
@@ -82,5 +90,5 @@ internal class TrailBadges(board:Entity,private val metresPerDp:Float,private va
             }
         }
     }
-    fun close(){finishes.values.forEach{it.silver.close();it.original.close()}}
+    fun close(){finishes.values.forEach{it.silver.close();it.originals.flatten().distinct().forEach{material->material.close()}}}
 }

@@ -7,6 +7,7 @@ import com.pico.spatial.ui.design.Button
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
@@ -112,6 +113,11 @@ internal fun RunBoard(s:RidgeSession,onHeight:(Float)->Unit){
     val course=s.course
     val density=LocalDensity.current
     val converter=LocalPhysicalLengthConverter.current
+    var lockedBadge by remember{mutableStateOf<TrailBadge?>(null)}
+    var hintRevision by remember{mutableIntStateOf(0)}
+    LaunchedEffect(hintRevision){
+        if(lockedBadge!=null){delay(5000);lockedBadge=null}
+    }
     var today by remember{mutableStateOf(LocalDate.now())}
     var totals by remember(journal){mutableStateOf(journal.snapshot())}
     LaunchedEffect(journal){
@@ -128,6 +134,10 @@ internal fun RunBoard(s:RidgeSession,onHeight:(Float)->Unit){
     }.clip(RoundedCornerShape(24.dp))
         .backgroundMaterial(enable=true,style=Material.Regular)
         .padding(horizontal=22.dp,vertical=14.dp)){
+        if(s.showLeaderboard){
+            DailyRankingPanel { s.showLeaderboard=false }
+            return@Column
+        }
         val selected=s.selectedBadge
         if(selected!=null){
             Row(Modifier.fillMaxWidth().height(156.dp),verticalAlignment=Alignment.CenterVertically){
@@ -150,7 +160,7 @@ internal fun RunBoard(s:RidgeSession,onHeight:(Float)->Unit){
         }
         Row(verticalAlignment=Alignment.CenterVertically){
             Column(Modifier.weight(1f)){
-                Caption("${today.monthValue}月${today.dayOfMonth}日 · 今日角色跑动")
+                Caption("${today.monthValue}月${today.dayOfMonth}日 · 今日跑动")
                 Reading("今日跑动",PicoTheme.typography.displayMedium){
                     val km=totals.todayMetres>=1000
                     decimal(if(km)totals.todayMetres/1000 else totals.todayMetres,if(km)3 else 0) to (if(km)"km" else "m")
@@ -158,6 +168,8 @@ internal fun RunBoard(s:RidgeSession,onHeight:(Float)->Unit){
                 Reading("",PicoTheme.typography.labelMedium,true){"累计 ${distance(totals.totalMetres,2)}" to ""}
             }
             Column(Modifier.width(148.dp),horizontalAlignment=Alignment.End){
+                Button(onClick={s.selectedBadge=null;s.showLeaderboard=true}){Text("排行榜")}
+                Spacer(Modifier.height(5.dp))
                 Caption("山脊剖面")
                 RidgeProfile(course,Modifier.fillMaxWidth().height(40.dp))
             }
@@ -190,21 +202,29 @@ internal fun RunBoard(s:RidgeSession,onHeight:(Float)->Unit){
         Spacer(Modifier.height(10.dp))
         Row(Modifier.fillMaxWidth().height(TrailBadge.ROW_DP.dp),verticalAlignment=Alignment.CenterVertically){
             Column(Modifier.weight(1f)){
-                Text("山野成就 · 已打卡 ${s.earnedDays} 天",style=PicoTheme.typography.titleSmall)
+                Text("山野成就 · 已寻星打卡 ${s.earnedDays} 天",style=PicoTheme.typography.titleSmall)
                 val next=TrailBadge.entries.firstOrNull{!it.isEarned(s.earnedDays)}
-                Caption(if(next==null)"三枚徽章已集齐 · 山野常伴"
-                    else if(s.earnedDays==0)"集齐三颗星，点亮晨光徽章"
-                    else "再打卡 ${next.days-s.earnedDays} 天，点亮${next.title}")
+                Text(
+                    lockedBadge?.let{"${it.title}未获得，请寻星打卡点亮\n每日集齐三颗星，累计 ${it.days} 天获得"}
+                        ?: if(next==null)"三枚徽章已集齐 · 山野常伴"
+                        else "再寻星打卡 ${next.days-s.earnedDays} 天，点亮${next.title}\n每日寻星三颗完成打卡",
+                    style=PicoTheme.typography.labelMedium,
+                    color=PicoTheme.colorScheme.labelSecondary,maxLines=2
+                )
             }
             TrailBadge.entries.forEach{badge->
                 val earned=badge.isEarned(s.earnedDays)
-                val interaction=if(earned) Modifier.spatialHoverEffect()
-                    .clickable(onClickLabel="查看${badge.title}徽章"){s.selectedBadge=badge} else Modifier
+                val interaction=Modifier.spatialHoverEffect()
+                    .clickable(onClickLabel=if(earned)"查看${badge.title}徽章" else "查看${badge.title}点亮条件"){
+                        if(earned){lockedBadge=null;s.selectedBadge=badge}
+                        else{lockedBadge=badge;hintRevision++}
+                    }
                 Box(Modifier.width(TrailBadge.SLOT_DP.dp).fillMaxHeight().clip(RoundedCornerShape(12.dp))
                     .then(interaction).semantics(mergeDescendants=true){
                     contentDescription="${badge.title}，打卡 ${badge.days} 天，${if(earned)"已获得" else "未获得"}"
                 },contentAlignment=Alignment.BottomCenter){Caption("${badge.title} · ${badge.days}天")}
             }
         }
+
     }
 }

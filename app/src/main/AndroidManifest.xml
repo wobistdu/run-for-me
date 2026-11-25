@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
@@ -17,6 +18,7 @@
         android:theme="@style/Theme.TerrainRunnerTheme"
         tools:targetApi="31">
 
+        <meta-data android:name="pvr.app.id" android:value="${ppsAppId}" />
         <service android:name=".platform.CompanionRunService" android:exported="false"
             android:foregroundServiceType="specialUse" android:stopWithTask="true">
             <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"

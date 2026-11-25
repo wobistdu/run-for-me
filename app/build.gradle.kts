@@ -12,11 +12,14 @@ android {
     androidResources { noCompress += "pfnn" }
 
     defaultConfig {
+        manifestPlaceholders["ppsAppId"] = providers.gradleProperty("ppsAppId").orElse("").get()
+        resValue("string", "pps_app_id", providers.gradleProperty("ppsAppId").orElse("").get())
+        resValue("string", "pps_daily_board_prefix", providers.gradleProperty("ppsDailyBoardPrefix").orElse("").get())
         applicationId = "com.example.terrainrunner"
         minSdk = 35
         targetSdk = 35
-        versionCode = 9
-        versionName = "0.3.1"
+        versionCode = 12
+        versionName = "0.3.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk { abiFilters.add("arm64-v8a") }
@@ -44,6 +47,8 @@ android {
 }
 
 dependencies {
+    implementation("com.pico.pps:platform-service-leaderboard:1.1.2")
+    implementation("com.pico.pps:platform-service-auth:1.1.2")
     implementation(libs.androidx.core.ktx)
     implementation(platform(libs.spatial.bom))
     implementation(libs.spatial.core)

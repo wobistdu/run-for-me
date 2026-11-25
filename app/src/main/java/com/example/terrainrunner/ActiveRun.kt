@@ -9,6 +9,7 @@ import kotlinx.coroutines.*
 internal class ActiveRun(app:SpatialApplication){
     private val scope=CoroutineScope(SupervisorJob()+Dispatchers.Main.immediate)
     private val audio=TrailAudio(app)
+    private val appRanking=app.dailyRanking
     val ready=scope.async {
         withContext(Dispatchers.IO){
             val prefs=app.getSharedPreferences("runner-style",0)
@@ -63,6 +64,7 @@ internal class ActiveRun(app:SpatialApplication){
         last=now
         if(now-lastCalendarCheck>=1_000_000_000L){
             s.journal?.snapshot()
+            appRanking.syncIfDue()
             lastCalendarCheck=now
         }
         if(view!=null && skippedPoses){view.resetInterpolation();skippedPoses=false}

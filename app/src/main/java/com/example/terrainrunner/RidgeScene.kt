@@ -25,6 +25,8 @@ internal class RidgeScene(private val content:SpatialViewContent,val state:Ridge
     private val groundMesh=SculptedGround(ground)
     private val vertices=groundMesh.vertices
     private class Body(val root:Entity){
+        private val entities=root.tree().toList()
+        fun setVisible(visible:Boolean){entities.forEach{it.enabled=visible}}
         val skin=root.findSkinnedMeshEntity().single()
         val skeleton=SkeletonPoseComponent().also{skin.components.set(it)}
         val order=skeleton.getJointNames().map{it.substringAfterLast("J").toInt()}.toIntArray()
@@ -62,10 +64,10 @@ internal class RidgeScene(private val content:SpatialViewContent,val state:Ridge
         content.addEntity(mount);mount.addChild(island);island.addChild(land);island.addChild(grasses.entity)
 
         island.addChild(actor);actor.tr.scaleVector=Vector3(Network.BODY_SCALE)
-        runners.forEach{(style,model)->actor.addChild(model.root);model.root.enabled=style==active}
+        runners.forEach{(style,model)->actor.addChild(model.root);model.setVisible(style==active)}
         mount.addChild(previewStand)
         previewStand.addChild(turntable)
-        previews.values.forEach{model->turntable.addChild(model);model.enabled=false}
+        previews.values.forEach{model->turntable.addChild(model);model.tree().forEach{it.enabled=false}}
         previewStand.addChild(previewHit)
         val bindHeight=160f*Network.BIND_UNIT
         previewHit.tr.position=Vector3(0f,bindHeight*.5f,0f)
@@ -86,8 +88,8 @@ internal class RidgeScene(private val content:SpatialViewContent,val state:Ridge
     private fun updatePreview(){
         val next=if(state.choosingRunner)state.candidate else null
         if(next==displayedPreview)return
-        displayedPreview?.let{previews.getValue(it).enabled=false}
-        next?.let{previews.getValue(it).enabled=true}
+        displayedPreview?.let{previews.getValue(it).tree().forEach{node->node.enabled=false}}
+        next?.let{previews.getValue(it).tree().forEach{node->node.enabled=true}}
         previewStand.enabled=next!=null
         if(displayedPreview==null){previewYaw=0f;turnPreview(0f)}
         Log.i("RidgePreview","candidate=$next")
@@ -112,8 +114,8 @@ internal class RidgeScene(private val content:SpatialViewContent,val state:Ridge
         // Restore the original compact desk size; it must not grow with the terrain width.
         panel.tr.scaleVector=Vector3(minOf(1.15f,(2*half.y-.08f)/panelHeight.coerceAtLeast(.001f)))
         // The whole panel lives in the reserved front lane, outside the terrain footprint.
-        val bottomSafe=-half.y+.045f+panelHeight*panel.tr.scaleVector.y*.5f
-        panel.tr.position=Vector3(0f,max(island.tr.position.y+.16f,bottomSafe),half.z-.035f)
+        val bottomSafe=-half.y+.015f+panelHeight*panel.tr.scaleVector.y*.5f
+        panel.tr.position=Vector3(0f,max(island.tr.position.y+.10f,bottomSafe),half.z-.035f)
     }
     private fun placeBoard(half:Vector3){
         val islandScale=island.tr.scaleVector.x
@@ -234,8 +236,8 @@ internal class RidgeScene(private val content:SpatialViewContent,val state:Ridge
     // Keep the last two corrected simulation poses, even when one callback advances twice.
     fun capturePose(){
         if(active!=state.runner){
-            body.root.enabled=false
-            active=state.runner;body.root.enabled=true
+            body.setVisible(false)
+            active=state.runner;body.setVisible(true)
             resetInterpolation()
         }
         val trial=state.trial
@@ -269,7 +271,7 @@ internal class RidgeScene(private val content:SpatialViewContent,val state:Ridge
         updatePreview()
         updateMarkers()
         if(board.enabled!=state.boardVisible)board.enabled=state.boardVisible
-        if(state.boardVisible)badges.update(state.earnedDays,state.selectedBadge,state.badgeYaw)
+        if(state.boardVisible)badges.update(state.earnedDays,state.selectedBadge,state.badgeYaw,!state.showLeaderboard)
         expeditionScenery.update()
         capturePose()
         val end=after?:return false

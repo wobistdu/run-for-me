@@ -86,7 +86,7 @@ internal fun TrailMenu(s: RidgeSession, page: TrailPage, open: (TrailPage) -> Un
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(painterResource(R.drawable.icon_3d_layer_1), contentDescription = null, modifier = Modifier.size(52.dp))
-                DeskHeading(stringResource(R.string.app_name), "插旗寻星，捏出山路，看跑者过桥翻山。")
+                DeskHeading(stringResource(R.string.app_name), "插旗寻星，捏出山路，看跑者过桥翻山")
             }
             Row(
                 Modifier.fillMaxWidth().padding(vertical = 4.dp),
@@ -104,7 +104,7 @@ internal fun TrailMenu(s: RidgeSession, page: TrailPage, open: (TrailPage) -> Un
             RunControls(s)
         }
         TrailPage.FREE -> {
-            DeskHeading("自由玩山野", "插旗决定方向，捏山改变地形。", Modifier.fillMaxWidth())
+            DeskHeading("自由玩山野", "插旗决定方向，捏山改变地形", Modifier.fillMaxWidth())
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(onClick = s::editPoints, modifier = Modifier.weight(1f)) { Text("插旗带路") }
                 Button(onClick = s::editMode, modifier = Modifier.weight(1f)) { Text("捏山修路") }

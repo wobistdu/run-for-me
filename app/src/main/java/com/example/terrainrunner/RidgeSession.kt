@@ -62,6 +62,7 @@ class RidgeSession(val network:Network,private val original:Course,internal val 
     internal var questRevision by mutableIntStateOf(0);private set
     internal var questMessage by mutableStateOf("");private set
     internal var totalStars by mutableLongStateOf(0L);private set
+    internal var showLeaderboard by mutableStateOf(false)
     private var openedBadge by mutableStateOf<TrailBadge?>(null)
     internal var selectedBadge:TrailBadge?
         get()=openedBadge
@@ -171,8 +172,8 @@ class RidgeSession(val network:Network,private val original:Course,internal val 
     private fun flagCount(){
         editCaption=when{
             questActive->"剩余 ${legs.size} 面红旗"
-            legs.isEmpty()->"试着在跑者前方插一面旗。"
-            else->"正跑向红旗 · 还剩 ${legs.size} 面，可继续插旗。"
+            legs.isEmpty()->"试着在跑者前方插一面旗"
+            else->"正跑向红旗 · 还剩 ${legs.size} 面，可继续插旗"
         }
     }
 
@@ -227,7 +228,7 @@ class RidgeSession(val network:Network,private val original:Course,internal val 
                 fieldBook?.reachedFirstFlag=true
             }
             if(placing){
-                if(!questActive && legs.isEmpty())editCaption="已到红旗！再选一处地面，或退出继续巡跑。"
+                if(!questActive && legs.isEmpty())editCaption="已到红旗！再选一处地面，或退出继续巡跑"
                 else flagCount()
             }
 

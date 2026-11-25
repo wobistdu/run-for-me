@@ -19,6 +19,12 @@ class RunJournalTest {
         return RunJournal(prefs)
     }
 
+    @Test fun seventyThreeKilogramRunningEnergy(){
+        assertEquals(0.0,RunTotals(0.0,0.0,0.0,0,0).kcal,0.0)
+        assertEquals(73.0,RunTotals(1000.0,1000.0,0.0,1,1).kcal,1e-9)
+        assertEquals(105.85,RunTotals(1000.0,1000.0,100.0,1,1).kcal,1e-9)
+    }
+
     @Test fun slopeUsesCharacterScaleAndPersists(){
         val j=fresh()
         val course=Course.ridge(FloatArray(Course.SAMPLES*Course.SAMPLES){(it%Course.SAMPLES)*.002f})
@@ -37,6 +43,7 @@ class RunJournalTest {
         val restored=RunJournal(prefs).snapshot(now,zone)
         assertEquals(result.todayMetres,restored.todayMetres,.00051)
         assertEquals(result.ascentMetres,restored.ascentMetres,.00051)
+        assertEquals(result.kcal,restored.kcal,.0002)
     }
 
     @Test fun localMidnightStreakAndMissedDay(){

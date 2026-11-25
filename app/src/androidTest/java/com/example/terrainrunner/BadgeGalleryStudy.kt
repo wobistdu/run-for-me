@@ -40,6 +40,15 @@ class BadgeGalleryStudy {
                     assertEquals(badge,state.selectedBadge)
                     assertTrue(gallery.previewHit.enabled)
                     assertEquals(1,meshes.values.count{it.enabled})
+                    for((candidate,root) in meshes){
+                        assertTrue("Unexpected visible geometry for $candidate",
+                            root.tree().all{it.enabled==(candidate==badge)})
+                    }
+                    gallery.update(state.earnedDays,state.selectedBadge,state.badgeYaw,false)
+                    assertTrue(meshes.values.all{root->root.tree().none{it.enabled}})
+                    assertFalse(gallery.previewHit.enabled)
+                    update()
+                    assertEquals(1,meshes.values.count{it.enabled})
                     val front=mesh.tr.quaternion
                     state.rotateBadge(180f);update()
                     val back=mesh.tr.quaternion

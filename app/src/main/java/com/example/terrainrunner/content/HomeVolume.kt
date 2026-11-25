@@ -83,12 +83,13 @@ private fun Desk(s:RidgeSession,onHeight:(Float)->Unit){
             return@Column
         }
         if(preparing){
-            Text("今日寻星",style=PicoTheme.typography.titleMedium)
-            Text("正在山野中寻找可抵达的星位…")
+            HuntTitle("今日寻星")
+            Text("正在山野中寻找可抵达的星位…",style=PicoTheme.typography.bodySmall,color=PicoTheme.colorScheme.labelSecondary)
             return@Column
         }
         if(huntError){
-            Text("当前地形放不下三颗可抵达的星星",style=PicoTheme.typography.bodyMedium)
+            HuntTitle("今日寻星")
+            Text("当前地形放不下三颗可抵达的星星",style=PicoTheme.typography.bodySmall,color=PicoTheme.colorScheme.labelSecondary)
             Row(horizontalArrangement=Arrangement.spacedBy(6.dp)){
                 Button(onClick=startHunt){Text("重新寻找")}
                 Button(onClick={huntError=false;s.leaveExpedition()}){Text(BACK_HOME)}
@@ -98,14 +99,14 @@ private fun Desk(s:RidgeSession,onHeight:(Float)->Unit){
         if(s.expedition!=null){ExpeditionPanel(s,startHunt);return@Column}
         if(!s.placing && !s.editing){TrailMenu(s,menuPage,{menuPage=it},startHunt);return@Column}
         if(s.placing){
-            DeskHeading("插旗带路", "看向沙盘上的一块草地，拇指和食指捏一下再松开。", Modifier.fillMaxWidth())
+            DeskHeading("插旗带路", "看向沙盘上的一块草地，拇指和食指捏一下再松开", Modifier.fillMaxWidth())
             Text(s.caption,style=PicoTheme.typography.bodyMedium,color=PicoTheme.colorScheme.labelSecondary)
             Row(horizontalArrangement=Arrangement.spacedBy(4.dp)){
                 Button(onClick=s::removePoint,enabled=s.visiblePoints.isNotEmpty()){Text("撤销一旗")}
                 Button(onClick=s::exitPoints){Text("退出")}
             }
         }else if(s.editing){
-            DeskHeading("捏山修路", "选压低或抬高，捏住地面拖动，松手保存这一笔。", Modifier.fillMaxWidth())
+            DeskHeading("捏山修路", "选压低或抬高，捏住地面拖动，松手保存这一笔", Modifier.fillMaxWidth())
             if(s.caption!="捏住拖动塑形")RunStatus(s)
             Row(horizontalArrangement=Arrangement.spacedBy(4.dp)){
                 for((tool,label) in listOf(Tool.LOWER to "压低",Tool.RAISE to "抬高")){
@@ -137,7 +138,7 @@ fun HomeVolume(){
     LaunchedEffect(run){
         try{session=run.ready.await()}
         catch(e:CancellationException){throw e}
-        catch(e:Exception){Log.e("RidgeScene","Session load failed",e);error="山野暂时没有准备好，请关闭应用后重新打开。"}
+        catch(e:Exception){Log.e("RidgeScene","Session load failed",e);error="山野暂时没有准备好，请关闭应用后重新打开"}
     }
     val s=session
     if(error!=null || s==null){Text(error?:"正在加载山脊和跑者");return}
@@ -237,9 +238,11 @@ fun HomeVolume(){
                 val land=Entity.loadSuspend("asset://ridge/ridge.glb")
                 val bodies=RunnerStyle.entries.associateWith{Entity.loadSuspend(it.modelUri)}
                 val badges=TrailBadge.entries.associateWith{Entity.loadSuspend(it.modelUri)}
-                scene=RidgeScene(content,s,land,bodies,requireNotNull(panels.entity("desk")),requireNotNull(panels.entity("run-board")),boardWidth,badges)
+                val next=RidgeScene(content,s,land,bodies,requireNotNull(panels.entity("desk")),requireNotNull(panels.entity("run-board")),boardWidth,badges)
+                scene?.let{previous->run.detach(previous);previous.close()}
+                scene=next
             }catch(e:CancellationException){throw e}
-            catch(e:Exception){Log.e("RidgeScene","load failed",e);error="山野暂时没有准备好，请关闭应用后重新打开。"}
+            catch(e:Exception){Log.e("RidgeScene","load failed",e);error="山野暂时没有准备好，请关闭应用后重新打开"}
         })
     LaunchedEffect(scene,run){
         val view=scene?:return@LaunchedEffect

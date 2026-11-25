@@ -11,8 +11,12 @@ internal data class RunTotals(
     val todayMetres:Double, val totalMetres:Double, val ascentMetres:Double,
     val days:Int, val streak:Int
 ){
-    // Game estimate for a 60 kg avatar, including the extra work on ascents.
-    val kcal get()=60.0*(todayMetres/1000.0+.009*ascentMetres)
+    // 73 kg virtual runner, net activity estimate (not the headset wearer's expenditure).
+    // ACSM running terms: 0.2 mL O2/kg/m horizontal + 0.9 mL/kg/m ascent,
+    // converted at 5 kcal/L; no resting calories or additional reward multiplier.
+    // Uses the journal's character-scale game distance, an approximation for uneven terrain.
+    // Reference: https://pmc.ncbi.nlm.nih.gov/articles/PMC10707652/
+    val kcal get()=73.0*(todayMetres/1000.0+.0045*ascentMetres)
 }
 
 /** One entry per active local calendar day. Simulation and publication run on the UI thread. */
